@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoulPeace - Meditation & Dhikr</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+ 
+</head>
+<body>
+    <!-- Authentication Screen -->
+    <div class="auth-screen" id="authScreen">
+        <div class="auth-container">
+            <div class="auth-tabs">
+                <div class="auth-tab active" onclick="switchAuthTab('login')">Login</div>
+                <div class="auth-tab" onclick="switchAuthTab('register')">Register</div>
+            </div>
+            
+            <div class="auth-form active" id="loginForm">
+                <input type="email" id="loginEmail" placeholder="Email" required>
+                <input type="password" id="loginPassword" placeholder="Password" required>
+                <button class="auth-btn" onclick="login()">Login to SoulPeace</button>
+            </div>
+            
+            <div class="auth-form" id="registerForm">
+                <input type="text" id="registerName" placeholder="Full Name" required>
+                <input type="email" id="registerEmail" placeholder="Email" required>
+                <input type="password" id="registerPassword" placeholder="Password" required>
+                <button class="auth-btn" onclick="register()">Create Account</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-pray"></i>
+                <h1>Soul<span>Peace</span></h1>
+            </div>
+            <div class="user-info">
+                <div class="level-badge">
+                    <i class="fas fa-star"></i>
+                    <span>Level <span id="userLevel">1</span></span>
+                </div>
+                <div class="streak">
+                    <i class="fas fa-fire"></i>
+                    <span id="streakCount">0</span> day streak
+                </div>
+                <button onclick="logout()" style="background: none; border: none; color: var(--danger); cursor: pointer;">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="showSection('dashboard')">
+                <i class="fas fa-home"></i>
+                <div>Dashboard</div>
+            </div>
+            <div class="nav-tab" onclick="showSection('dhikr')">
+                <i class="fas fa-praying-hands"></i>
+                <div>Dhikr & Tasbih</div>
+            </div>
+            <div class="nav-tab" onclick="showSection('meditation')">
+                <i class="fas fa-spa"></i>
+                <div>Meditation</div>
+            </div>
+            <div class="nav-tab" onclick="showSection('prayer')">
+                <i class="fas fa-mosque"></i>
+                <div>Prayer Times</div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="app-content" id="appContent">
+            <!-- Dashboard Section -->
+            <div class="feature-section active" id="dashboardSection">
+                <div class="dashboard-grid">
+                    <div class="stat-card">
+                        <h3>TOTAL DHIKR COUNT</h3>
+                        <div class="stat-value" id="totalDhikr">0</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 25%"></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>MEDITATION TIME</h3>
+                        <div class="stat-value" id="totalMeditation">0</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 40%"></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>ACHIEVEMENTS</h3>
+                        <div class="stat-value" id="achievementCount">0/12</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 60%"></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>NEXT LEVEL</h3>
+                        <div class="stat-value" id="xpCount">150/1000</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 15%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 style="margin: 30px 0 20px; color: var(--secondary);">Recent Achievements</h2>
+                <div class="achievements-grid" id="achievementsList">
+                    <!-- Achievements will be loaded here -->
+                </div>
+
+                <h2 style="margin: 30px 0 20px; color: var(--secondary);">Unlockable Features</h2>
+                <div class="ui-unlocks" id="unlocksList">
+                    <!-- Unlockable items will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Dhikr Section -->
+            <div class="feature-section" id="dhikrSection">
+                <div class="dhikr-counter">
+                    <h2 style="color: var(--secondary); margin-bottom: 20px;">Dhikr Counter</h2>
+                    <div class="counter-display" id="countDisplay">0</div>
+                    <div class="counter-buttons">
+                        <button class="counter-btn" onclick="incrementCount()">
+                            <i class="fas fa-plus"></i> Count
+                        </button>
+                        <button class="counter-btn reset" onclick="resetCount()">
+                            <i class="fas fa-redo"></i> Reset
+                        </button>
+                    </div>
+                    <button class="counter-btn" style="background: var(--accent);" onclick="saveCount()">
+                        <i class="fas fa-save"></i> Save Session
+                    </button>
+
+                    <h3 style="margin: 40px 0 20px; color: var(--secondary);">Quick Dhikr Presets</h3>
+                    <div class="dhikr-presets">
+                        <div class="preset-btn" onclick="setPreset(33)">
+                            <div class="preset-name">Subhan Allah</div>
+                            <div class="preset-count">33 times</div>
+                        </div>
+                        <div class="preset-btn" onclick="setPreset(33)">
+                            <div class="preset-name">Alhamdulillah</div>
+                            <div class="preset-count">33 times</div>
+                        </div>
+                        <div class="preset-btn" onclick="setPreset(33)">
+                            <div class="preset-name">Allahu Akbar</div>
+                            <div class="preset-count">33 times</div>
+                        </div>
+                        <div class="preset-btn" onclick="setPreset(100)">
+                            <div class="preset-name">Astaghfirullah</div>
+                            <div class="preset-count">100 times</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Meditation Section -->
+            <div class="feature-section" id="meditationSection">
+                <div class="meditation-timer">
+                    <h2 style="color: var(--secondary); margin-bottom: 20px;">Meditation Timer</h2>
+                    <div class="timer-circle" id="timerDisplay">
+                        10:00
+                    </div>
+                    <div class="timer-controls">
+                        <button class="timer-btn" onclick="startTimer()">
+                            <i class="fas fa-play"></i> Start
+                        </button>
+                        <button class="timer-btn" onclick="pauseTimer()">
+                            <i class="fas fa-pause"></i> Pause
+                        </button>
+                        <button class="timer-btn" onclick="resetTimer()">
+                            <i class="fas fa-stop"></i> Reset
+                        </button>
+                    </div>
+                    <div style="margin: 20px 0;">
+                        <label style="color: var(--secondary); font-weight: 500;">Duration: </label>
+                        <select id="durationSelect" onchange="changeDuration(this.value)" style="padding: 10px; border-radius: var(--radius); border: 2px solid #eee; margin-left: 10px;">
+                            <option value="5">5 minutes</option>
+                            <option value="10" selected>10 minutes</option>
+                            <option value="15">15 minutes</option>
+                            <option value="30">30 minutes</option>
+                        </select>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px; color: var(--secondary);">Nature Sounds</h3>
+                    <div class="sound-selector" id="soundSelector">
+                        <!-- Sound options will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prayer Times Section -->
+            <div class="feature-section" id="prayerSection">
+                <h2 style="color: var(--secondary); margin-bottom: 20px;">Prayer Times</h2>
+                <div class="prayer-times" id="prayerTimes">
+                    <!-- Prayer times will be loaded here -->
+                </div>
+
+                <div style="margin-top: 40px; background: rgba(45, 140, 58, 0.1); padding: 25px; border-radius: var(--radius);">
+                    <h3 style="color: var(--secondary); margin-bottom: 15px;">Prayer Reminders</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; color: var(--secondary);">Notification Type:</label>
+                            <select style="width: 100%; padding: 12px; border-radius: var(--radius); border: 2px solid #eee;">
+                                <option>Adhan Sound</option>
+                                <option>Vibration Only</option>
+                                <option>Silent Notification</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; color: var(--secondary);">Advance Notice:</label>
+                            <select style="width: 100%; padding: 12px; border-radius: var(--radius); border: 2px solid #eee;">
+                                <option>5 minutes before</option>
+                                <option>10 minutes before</option>
+                                <option>15 minutes before</option>
+                            </select>
+                        </div>
+                        <div style="display: flex; align-items: flex-end;">
+                            <button style="background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: var(--radius); cursor: pointer; width: 100%;">
+                                <i class="fas fa-bell"></i> Save Settings
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation for Mobile -->
+    <div class="bottom-nav">
+        <div class="bottom-nav-item active" onclick="showSection('dashboard')">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </div>
+        <div class="bottom-nav-item" onclick="showSection('dhikr')">
+            <i class="fas fa-praying-hands"></i>
+            <span>Dhikr</span>
+        </div>
+        <div class="bottom-nav-item" onclick="showSection('meditation')">
+            <i class="fas fa-spa"></i>
+            <span>Meditate</span>
+        </div>
+        <div class="bottom-nav-item" onclick="showSection('prayer')">
+            <i class="fas fa-mosque"></i>
+            <span>Prayer</span>
+        </div>
+    </div>
+
+    <script>
+        // App State
+        let currentUser = null;
+        let currentCount = 0;
+        let currentStreak = 0;
+        let userLevel = 1;
+        let userXP = 150;
+        let totalDhikr = 0;
+        let totalMeditation = 0;
+        let timerInterval = null;
+        let timerSeconds = 600; // 10 minutes default
+        let isTimerRunning = false;
+        let selectedSound = null;
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            const savedUser = localStorage.getItem('soulpeace_user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                loadUserData();
+                showApp();
+            } else {
+                showAuth();
+            }
+
+            // Initialize sound selector
+            initializeSounds();
+            
+            // Load prayer times
+            loadPrayerTimes();
+            
+            // Load achievements
+            loadAchievements();
+            
+            // Load unlockable items
+            loadUnlockableItems();
+            
+            // Initialize PWA
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js').catch(console.error);
+            }
+        });
+
+        // Authentication Functions
+        function switchAuthTab(tab) {
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            
+            if (tab === 'login') {
+                document.querySelector('.auth-tab:nth-child(1)').classList.add('active');
+                document.getElementById('loginForm').classList.add('active');
+            } else {
+                document.querySelector('.auth-tab:nth-child(2)').classList.add('active');
+                document.getElementById('registerForm').classList.add('active');
+            }
+        }
+
+        function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                alert('Please enter both email and password');
+                return;
+            }
+            
+            // Simulate login - in real app, would connect to backend
+            currentUser = {
+                name: "Spiritual Seeker",
+                email: email,
+                level: 1,
+                streak: 3,
+                joined: new Date().toISOString()
+            };
+            
+            localStorage.setItem('soulpeace_user', JSON.stringify(currentUser));
+            loadUserData();
+            showApp();
+        }
+
+        function register() {
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            
+            if (!name || !email || !password) {
+                alert('Please fill all fields');
+                return;
+            }
+            
+            // Simulate registration
+            currentUser = {
+                name: name,
+                email: email,
+                level: 1,
+                streak: 1,
+                joined: new Date().toISOString()
+            };
+            
+            localStorage.setItem('soulpeace_user', JSON.stringify(currentUser));
+            loadUserData();
+            showApp();
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('soulpeace_user');
+                currentUser = null;
+                showAuth();
+            }
+        }
+
+        function showAuth() {
+            document.getElementById('authScreen').style.display = 'flex';
+            document.getElementById('appContent').style.display = 'none';
+        }
+
+        function showApp() {
+            document.getElementById('authScreen').style.display = 'none';
+            document.getElementById('appContent').style.display = 'grid';
+        }
+
+        // Load User Data
+        function loadUserData() {
+            if (!currentUser) return;
+            
+            // Load from localStorage
+            const userData = JSON.parse(localStorage.getItem('soulpeace_data_' + currentUser.email)) || {
+                count: 0,
+                streak: currentUser.streak || 1,
+                level: currentUser.level || 1,
+                xp: 150,
+                totalDhikr: 0,
+                totalMeditation: 0,
+                achievements: []
+            };
+            
+            currentCount = userData.count || 0;
+            currentStreak = userData.streak || 1;
+            userLevel = userData.level || 1;
+            userXP = userData.xp || 150;
+            totalDhikr = userData.totalDhikr || 0;
+            totalMeditation = userData.totalMeditation || 0;
+            
+            updateUI();
+        }
+
+        function saveUserData() {
+            if (!currentUser) return;
+            
+            const userData = {
+                count: currentCount,
+                streak: currentStreak,
+                level: userLevel,
+                xp: userXP,
+                totalDhikr: totalDhikr,
+                totalMeditation: totalMeditation,
+                lastActive: new Date().toISOString()
+            };
+            
+            localStorage.setItem('soulpeace_data_' + currentUser.email, JSON.stringify(userData));
+        }
+
+        // Navigation
+        function showSection(section) {
+            // Update navigation tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.bottom-nav-item').forEach(item => item.classList.remove('active'));
+            document.querySelectorAll('.feature-section').forEach(sec => sec.classList.remove('active'));
+            
+            // Activate selected section
+            document.getElementById(section + 'Section').classList.add('active');
+            
+            // Find and activate corresponding nav items
+            const navIndex = {
+                'dashboard': 0,
+                'dhikr': 1,
+                'meditation': 2,
+                'prayer': 3
+            }[section];
+            
+            if (navIndex !== undefined) {
+                document.querySelectorAll('.nav-tab')[navIndex].classList.add('active');
+                document.querySelectorAll('.bottom-nav-item')[navIndex].classList.add('active');
+            }
+        }
+
+        // Dhikr Counter Functions
+        function incrementCount() {
+            currentCount++;
+            totalDhikr++;
+            userXP += 2;
+            
+            updateCountDisplay();
+            checkLevelUp();
+            saveUserData();
+        }
+
+        function resetCount() {
+            if (currentCount > 0) {
+                if (confirm('Reset current count?')) {
+                    currentCount = 0;
+                    updateCountDisplay();
+                }
+            }
+        }
+
+        function saveCount() {
+            if (currentCount === 0) {
+                alert('Please count some Dhikr first!');
+                return;
+            }
+            
+            // Update streak if this is a new day
+            updateStreak();
+            
+            // Add XP for completing session
+            userXP += Math.floor(currentCount / 10);
+            
+            // Check achievements
+            checkAchievements();
+            
+            alert('Session saved! +' + Math.floor(currentCount / 10) + ' XP');
+            currentCount = 0;
+            updateCountDisplay();
+            saveUserData();
+        }
+
+        function setPreset(count) {
+            currentCount = count;
+            updateCountDisplay();
+        }
+
+        function updateCountDisplay() {
+            document.getElementById('countDisplay').textContent = currentCount;
+            document.getElementById('totalDhikr').textContent = totalDhikr.toLocaleString();
+        }
+
+        // Meditation Timer Functions
+        function initializeSounds() {
+            const sounds = [
+                {id: 'rain', name: 'Rain', icon: 'fas fa-cloud-rain'},
+                {id: 'waves', name: 'Ocean Waves', icon: 'fas fa-water'},
+                {id: 'forest', name: 'Forest', icon: 'fas fa-tree'},
+                {id: 'birds', name: 'Birds', icon: 'fas fa-dove'},
+                {id: 'wind', name: 'Wind', icon: 'fas fa-wind'},
+                {id: 'fire', name: 'Fireplace', icon: 'fas fa-fire'}
+            ];
+            
+            const container = document.getElementById('soundSelector');
+            container.innerHTML = '';
+            
+            sounds.forEach(sound => {
+                const div = document.createElement('div');
+                div.className = 'sound-option';
+                div.onclick = () => selectSound(sound.id, div);
+                div.innerHTML = `
+                    <i class="${sound.icon}"></i>
+                    <div>${sound.name}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function selectSound(soundId, element) {
+            document.querySelectorAll('.sound-option').forEach(opt => opt.classList.remove('active'));
+            element.classList.add('active');
+            selectedSound = soundId;
+            // In real app: play sound preview
+        }
+
+        function startTimer() {
+            if (isTimerRunning) return;
+            
+            isTimerRunning = true;
+            timerInterval = setInterval(() => {
+                timerSeconds--;
+                updateTimerDisplay();
+                
+                if (timerSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    isTimerRunning = false;
+                    alert('Meditation session complete!');
+                    completeMeditationSession();
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            changeDuration(document.getElementById('durationSelect').value);
+        }
+
+        function changeDuration(minutes) {
+            timerSeconds = parseInt(minutes) * 60;
+            updateTimerDisplay();
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timerSeconds / 60);
+            const seconds = timerSeconds % 60;
+            document.getElementById('timerDisplay').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function completeMeditationSession() {
+            const minutes = parseInt(document.getElementById('durationSelect').value);
+            totalMeditation += minutes;
+            userXP += minutes * 5;
+            
+            updateStreak();
+            checkAchievements();
+            checkLevelUp();
+            saveUserData();
+            updateUI();
+        }
+
+        // Prayer Times
+        function loadPrayerTimes() {
+            const times = [
+                {name: 'Fajr', time: '5:30 AM', status: 'passed'},
+                {name: 'Sunrise', time: '6:45 AM', status: 'passed'},
+                {name: 'Dhuhr', time: '12:30 PM', status: 'upcoming'},
+                {name: 'Asr', time: '4:15 PM', status: 'upcoming'},
+                {name: 'Maghrib', time: '6:45 PM', status: 'upcoming'},
+                {name: 'Isha', time: '8:00 PM', status: 'upcoming'}
+            ];
+            
+            const container = document.getElementById('prayerTimes');
+            container.innerHTML = '';
+            
+            times.forEach(prayer => {
+                const card = document.createElement('div');
+                card.className = `prayer-card ${prayer.status === 'upcoming' ? 'next' : ''}`;
+                card.innerHTML = `
+                    <div class="prayer-name">${prayer.name}</div>
+                    <div class="prayer-time">${prayer.time}</div>
+                    <div class="prayer-status status-${prayer.status}">
+                        ${prayer.status === 'passed' ? 'Completed' : 
+                          prayer.status === 'current' ? 'Now' : 'Upcoming'}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Achievements System
+        function loadAchievements() {
+            const achievements = [
+                {id: 1, name: 'First Steps', desc: 'Complete your first Dhikr session', progress: 100, unlocked: true},
+                {id: 2, name: 'Consistency', desc: '7-day streak', progress: 43, unlocked: false},
+                {id: 3, name: 'Meditation Beginner', desc: 'Complete 30 minutes of meditation', progress: 67, unlocked: false},
+                {id: 4, name: 'Dhikr Master', desc: 'Count 1000 Dhikr', progress: 25, unlocked: false},
+                {id: 5, name: 'Early Riser', desc: 'Complete Fajr prayer 5 times', progress: 20, unlocked: false},
+                {id: 6, name: 'Heart Purifier', desc: 'Meditate for 5 consecutive days', progress: 60, unlocked: false}
+            ];
+            
+            const container = document.getElementById('achievementsList');
+            container.innerHTML = '';
+            
+            achievements.forEach(ach => {
+                const card = document.createElement('div');
+                card.className = 'achievement-card';
+                card.innerHTML = `
+                    <div class="achievement-icon">
+                        <i class="fas ${ach.unlocked ? 'fa-trophy' : 'fa-lock'}"></i>
+                    </div>
+                    <div class="achievement-info">
+                        <h4>${ach.name}</h4>
+                        <div class="achievement-desc">${ach.desc}</div>
+                        <div class="achievement-progress">
+                            <div class="achievement-progress-fill" style="width: ${ach.progress}%"></div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            
+            document.getElementById('achievementCount').textContent = 
+                `${achievements.filter(a => a.unlocked).length}/${achievements.length}`;
+        }
+
+        function checkAchievements() {
+            // In a real app, check conditions and unlock achievements
+            console.log('Checking achievements...');
+        }
+
+        // Unlockable Items
+        function loadUnlockableItems() {
+            const items = [
+                {id: 1, name: 'Golden Theme', desc: 'Unlock beautiful golden UI', level: 5, icon: 'fas fa-palette'},
+                {id: 2, name: 'Nature Sounds Pack', desc: 'Additional meditation sounds', level: 3, icon: 'fas fa-music'},
+                {id: 3, name: 'Advanced Stats', desc: 'Detailed progress analytics', level: 7, icon: 'fas fa-chart-line'},
+                {id: 4, name: 'Custom Dhikr Sets', desc: 'Create your own Dhikr combinations', level: 4, icon: 'fas fa-edit'},
+                {id: 5, name: 'Dark Mode', desc: 'Easy on eyes night theme', level: 2, icon: 'fas fa-moon'},
+                {id: 6, name: 'Quranic Quotes', desc: 'Daily inspirational verses', level: 6, icon: 'fas fa-book-quran'}
+            ];
+            
+            const container = document.getElementById('unlocksList');
+            container.innerHTML = '';
+            
+            items.forEach(item => {
+                const unlocked = userLevel >= item.level;
+                const div = document.createElement('div');
+                div.className = `unlock-item ${unlocked ? '' : 'locked'}`;
+                div.innerHTML = `
+                    <div class="unlock-icon">
+                        <i class="${item.icon}"></i>
+                    </div>
+                    <h4>${item.name}</h4>
+                    <p style="color: var(--gray); font-size: 0.9rem; margin: 10px 0;">${item.desc}</p>
+                    <div class="unlock-level">Level ${item.level}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Level & Progress System
+        function checkLevelUp() {
+            const xpNeeded = userLevel * 1000;
+            if (userXP >= xpNeeded) {
+                userLevel++;
+                userXP -= xpNeeded;
+                alert(`Congratulations! You reached Level ${userLevel}!`);
+                updateUI();
+                loadUnlockableItems();
+            }
+        }
+
+        function updateStreak() {
+            const lastActive = localStorage.getItem('soulpeace_last_active');
+            const today = new Date().toDateString();
+            
+            if (!lastActive || lastActive !== today) {
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                
+                if (lastActive === yesterday.toDateString()) {
+                    currentStreak++;
+                } else {
+                    currentStreak = 1;
+                }
+                
+                localStorage.setItem('soulpeace_last_active', today);
+                updateUI();
+            }
+        }
+
+        // Update UI
+        function updateUI() {
+            if (!currentUser) return;
+            
+            document.getElementById('userLevel').textContent = userLevel;
+            document.getElementById('streakCount').textContent = currentStreak;
+            document.getElementById('totalDhikr').textContent = totalDhikr.toLocaleString();
+            document.getElementById('totalMeditation').textContent = totalMeditation + ' min';
+            document.getElementById('xpCount').textContent = `${userXP}/${userLevel * 1000}`;
+            
+            // Update progress bars
+            document.querySelectorAll('.progress-fill')[0].style.width = `${Math.min(100, (totalDhikr / 1000) * 100)}%`;
+            document.querySelectorAll('.progress-fill')[1].style.width = `${Math.min(100, (totalMeditation / 300) * 100)}%`;
+            document.querySelectorAll('.progress-fill')[2].style.width = `${(3/12) * 100}%`; // Achievements
+            document.querySelectorAll('.progress-fill')[3].style.width = `${(userXP / (userLevel * 1000)) * 100}%`;
+            
+            updateCountDisplay();
+        }
+
+        // Initialize the app
+        window.onload = function() {
+            // Show welcome message if new user
+            const isNewUser = !localStorage.getItem('soulpeace_welcome_shown');
+            if (isNewUser && currentUser) {
+                setTimeout(() => {
+                    alert(`Welcome to SoulPeace, ${currentUser.name}! Start your spiritual journey today.`);
+                    localStorage.setItem('soulpeace_welcome_shown', 'true');
+                }, 1000);
+            }
+        };
+    </script>
+
+    <!-- PWA Service Worker and Manifest -->
+    <script>
+        // Create manifest dynamically
+        const manifest = {
+            "name": "SoulPeace - Meditation & Dhikr",
+            "short_name": "SoulPeace",
+            "description": "Modern app for meditation, Dhikr, and prayer tracking",
+            "start_url": "/",
+            "display": "standalone",
+            "background_color": "#2C3E50",
+            "theme_color": "#2D8C3A",
+            "icons": [
+                {
+                    "src": "https://cdn-icons-png.flaticon.com/512/3159/3159310.png",
+                    "sizes": "192x192",
+                    "type": "image/png"
+                },
+                {
+                    "src": "https://cdn-icons-png.flaticon.com/512/3159/3159310.png",
+                    "sizes": "512x512",
+                    "type": "image/png"
+                }
+            ]
+        };
+
+        // Create and inject manifest
+        const manifestEl = document.createElement('link');
+        manifestEl.rel = 'manifest';
+        manifestEl.href = 'data:application/manifest+json,' + encodeURIComponent(JSON.stringify(manifest));
+        document.head.appendChild(manifestEl);
+
+        // Install prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Show install button after 10 seconds
+            setTimeout(() => {
+                if (confirm('Install SoulPeace app for better experience?')) {
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then(() => {
+                        deferredPrompt = null;
+                    });
+                }
+            }, 10000);
+        });
+    </script>
+</body>
+</html>
